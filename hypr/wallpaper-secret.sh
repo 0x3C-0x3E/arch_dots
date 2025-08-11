@@ -8,7 +8,7 @@ main() {
     choice=$(menu | wofi -c ~/.config/wofi/wallpaper -s ~/.config/wofi/style.css --show dmenu --prompt "Select Wallpaper:" -n)
     selected_wallpaper=$(echo "$choice" | sed 's/^img://')
     swww img "$selected_wallpaper" --transition-type any --transition-fps 165 --transition-duration .5
-    wal -i "$selected_wallpaper" -n --backend colorz
+    wal -i "$selected_wallpaper" -n --backend colorz 
     swaync-client --reload-css
     cat ~/.cache/wal/colors-kitty.conf > ~/.config/kitty/current-theme.conf
     pywalfox update
