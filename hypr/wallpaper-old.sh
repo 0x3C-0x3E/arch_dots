@@ -1,14 +1,17 @@
 #!/bin/bash
-WALLPAPER_DIR="$HOME/Pictures/wallpapers/"
-#I dont know what the fuck I am doing
-menu() {
-    find "${WALLPAPER_DIR}" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.gif" \) | awk '{print "img:"$0}'
-}
-main() {
-    choice=$(menu | wofi -c ~/.config/wofi/wallpaper -s ~/.config/wofi/style.css --show dmenu --prompt "Select Wallpaper:" -n)
-    selected_wallpaper=$(echo "$choice" | sed 's/^img://')
-    swww img "$selected_wallpaper" --transition-type any --transition-fps 165 --transition-duration .5
-    wal -i "$selected_wallpaper" -n --backend colorz
+
+# Directory containing your wallpapers
+WALLPAPER_DIR="$HOME/Pictures/wallpapers"
+
+# Let the user select a file using rofi
+SELECTED_FILE=$(find "$WALLPAPER_DIR" -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" \) | \
+  sort | rofi -dmenu -i "Select a wallpaper")
+
+# If a file was selected, use swww to set it
+if [ -n "$SELECTED_FILE" ]; then
+    swww img "$SELECTED_FILE" --transition-type any --transition-fps 165 --transition-duration .5
+
+    wal -i "$SELECTED_FILE" -n --cols16
     swaync-client --reload-css
     cat ~/.cache/wal/colors-kitty.conf > ~/.config/kitty/current-theme.conf
     pywalfox update
@@ -19,6 +22,5 @@ main() {
     sed -i "s/^gradient_color_2 = .*/gradient_color_2 = '$color2'/" $cava_config
     pkill -USR2 cava 2>/dev/null
     source ~/.cache/wal/colors.sh && cp -r $wallpaper ~/Pictures/wallpapers/template.png.jpg 
-}
-main
+fi
 
